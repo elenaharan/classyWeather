@@ -64,13 +64,21 @@ class App extends React.Component {
       const weatherData = await weatherRes.json();
       this.setState({ weather: weatherData.daily });
     } catch (err) {
-      console.err(err);
+      console.error(err);
     } finally {
       this.setState({ isLoading: false });
     }
   };
 
   handleChangeLocation = (e) => this.setState({ location: e.target.value });
+
+  componentDidMount() {
+    this.fetchWeather();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.location !== this.state.location) this.fetchWeather();
+  }
 
   render() {
     return (
@@ -80,7 +88,6 @@ class App extends React.Component {
           location={this.state.location}
           onChangeLocation={this.handleChangeLocation}
         />
-        <button onClick={this.fetchWeather}>Get weather</button>
         {this.state.isLoading && <p className="loader">Loading...</p>}
         {this.state.weather.weathercode && (
           <Weather
